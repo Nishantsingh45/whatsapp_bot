@@ -4,7 +4,7 @@ from config import Config
 import os
 class MetaWhatsAppService:
     @staticmethod
-    def download_media(media_id, save_path='downloads'):
+    def download_media(media_id, save_path='/tmp'):
         """
         Download media from Meta WhatsApp API and save it locally.
         
