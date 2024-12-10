@@ -52,8 +52,8 @@ class AIReceiptService:
                             "Date": "Date and time",
                             "total amount": "total amount",
                             "seller name": "name of seller",
-                            "item summary": "summary of all item",
-                         "category": "category
+                            "item summary": "summary of what was bought",
+                         "category": "category that this expense belongs to"
                            
                         }'''},
                         {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}

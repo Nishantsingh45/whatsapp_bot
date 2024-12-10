@@ -89,6 +89,7 @@ def webhook():
 📋 Receipt Processed Successfully! 
 💰 Amount: ${receipt_info['amount']:.2f}
 🏪 Seller: {receipt_info['seller']}
+📝 Summary: {receipt_info['summary']}
 📅 Date: {receipt_info['date_time']}
 🏷️ Category: {receipt_info['category']}
 
