@@ -77,7 +77,7 @@ class AIReceiptService:
         try:
             return {
                 'date_time': content['Date'],  # Rename 'Date' to 'date_time'
-                'amount': float(content['total amount']),  # Convert 'total amount' to a float
+                'amount': str(content['total amount']),  # Convert 'total amount' to a float
                 'seller': content['seller name'],  # Rename 'seller name' to 'seller'
                 'summary': content['item summary'],  # Rename 'item summary' to 'summary'
                 'category': content['category']  # No change for 'category'
