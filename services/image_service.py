@@ -64,7 +64,6 @@ class AIReceiptService:
             #receipt_text = response.choices[0].message.content
             content = json.loads(response.choices[0].message.content)
             return AIReceiptService._parse_receipt_info(content)
-            return content
         except Exception as e:
             logging.error(f"OpenAI Processing Error: {e}")
             return None

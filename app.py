@@ -47,7 +47,13 @@ def webhook():
             
             # Check if message contains media
             if 'type' in message and message['type'] == 'text':
-                MetaWhatsAppService.send_whatsapp_message(from_number, "Sorry, I couldn't process your receipt. Please try again.")
+                with app.app_context():
+                    user = User.query.filter_by(phone=from_number).first()
+                    if not user:
+                        user = User(phone=from_number)
+                        db.session.add(user)
+                        db.session.commit()
+                MetaWhatsAppService.send_whatsapp_message(from_number, "Please Provide your Receipt Image to get the Expense details")
             if 'type' in message and message['type'] == 'image':
                 media_id = message['image']['id']
                 
@@ -80,14 +86,14 @@ def webhook():
                     
                     # Send success message
                     confirmation_msg = f"""
-📋 Receipt Processed Successfully! 
-💰 Amount: ${receipt_info['amount']:.2f}
-🏪 Seller: {receipt_info['seller']}
-📅 Date: {receipt_info['date_time']}
-🏷️ Category: {receipt_info['category']}
+                    📋 Receipt Processed Successfully! 
+                    💰 Amount: ${receipt_info['amount']:.2f}
+                    🏪 Seller: {receipt_info['seller']}
+                    📅 Date: {receipt_info['date_time']}
+                    🏷️ Category: {receipt_info['category']}
 
-Thank you for uploading your receipt! 🎉
-"""
+                    Thank you for uploading your receipt! 🎉
+                    """
                     MetaWhatsAppService.send_whatsapp_message(from_number, confirmation_msg)
                 else:
                     MetaWhatsAppService.send_whatsapp_message(from_number, "Sorry, I couldn't process your receipt. Please try again.")
