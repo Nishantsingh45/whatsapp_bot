@@ -86,14 +86,14 @@ def webhook():
                     
                     # Send success message
                     confirmation_msg = f"""
-                    📋 Receipt Processed Successfully! 
-                    💰 Amount: ${receipt_info['amount']:.2f}
-                    🏪 Seller: {receipt_info['seller']}
-                    📅 Date: {receipt_info['date_time']}
-                    🏷️ Category: {receipt_info['category']}
+📋 Receipt Processed Successfully! 
+💰 Amount: ${receipt_info['amount']:.2f}
+🏪 Seller: {receipt_info['seller']}
+📅 Date: {receipt_info['date_time']}
+🏷️ Category: {receipt_info['category']}
 
-                    Thank you for uploading your receipt! 🎉
-                    """
+Thank you for uploading your receipt! 🎉
+"""
                     MetaWhatsAppService.send_whatsapp_message(from_number, confirmation_msg)
                 else:
                     MetaWhatsAppService.send_whatsapp_message(from_number, "Sorry, I couldn't process your receipt. Please try again.")
