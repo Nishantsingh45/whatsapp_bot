@@ -79,3 +79,42 @@ class MetaWhatsAppService:
         except Exception as e:
             logging.error(f"WhatsApp Message Send Error: {e}")
             return False
+        
+    @staticmethod
+    def send_whatsapp_interactive_message(phone_number, interactive_payload):
+        """
+        Send interactive WhatsApp message via Meta API
+        
+        :param phone_number: Recipient's phone number
+        :param interactive_payload: Dictionary containing interactive message details
+        """
+        try:
+            url = f"https://graph.facebook.com/v18.0/{Config.META_WA_PHONE_NUMBER_ID}/messages"
+            
+            # Use the passed interactive payload directly
+            payload = {
+                "messaging_product": "whatsapp",
+                "recipient_type": "individual",
+                "to": phone_number,
+                **interactive_payload
+            }
+            
+            headers = {
+                "Authorization": f"Bearer {Config.META_WA_TOKEN}",
+                "Content-Type": "application/json"
+            }
+            
+            response = requests.post(url, json=payload, headers=headers)
+            response.raise_for_status()
+            
+            # Log successful message send
+            logging.info(f"Interactive message sent to {phone_number}")
+            return True
+        
+        except requests.exceptions.RequestException as e:
+            logging.error(f"WhatsApp Interactive Message Send Error: {e}")
+            logging.error(f"Response content: {e.response.text if hasattr(e, 'response') else 'No response'}")
+            return False
+        except Exception as e:
+            logging.error(f"Unexpected WhatsApp Interactive Message Error: {e}")
+            return False
