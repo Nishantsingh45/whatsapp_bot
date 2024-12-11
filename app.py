@@ -289,9 +289,9 @@ def calculate_quarterly_expenses(phone_number):
         # Start of the current month
         start_of_current_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         # Start of the previous three months
-        month3_start = start_of_current_month - relativedelta(months=3)
-        month2_start = start_of_current_month - relativedelta(months=2)
-        month1_start = start_of_current_month - relativedelta(months=1)
+        month3_start = start_of_current_month - relativedelta(months=2)
+        month2_start = start_of_current_month - relativedelta(months=1)
+        month1_start = start_of_current_month - relativedelta(months=0)
         
         # Helper function to calculate monthly expenses with casting
         def calculate_month_expense(start_date, end_date):
@@ -310,9 +310,9 @@ def calculate_quarterly_expenses(phone_number):
         month1_expense = calculate_month_expense(month1_start, start_of_current_month)
         
         # Determine trend
-        if month1_expense > month2_expense > month3_expense:
+        if month1_expense > month2_expense:
             trend = "📈 Increasing"
-        elif month1_expense < month2_expense < month3_expense:
+        elif month1_expense < month2_expense:
             trend = "📉 Decreasing"
         else:
             trend = "↔️ Stable"
