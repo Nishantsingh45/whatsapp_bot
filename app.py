@@ -5,6 +5,7 @@ from services.image_service import AIReceiptService
 from services.storage_service import SupabaseStorageService
 from config import Config
 import logging
+from sqlalchemy import func
 
 def create_app():
     app = Flask(__name__)
