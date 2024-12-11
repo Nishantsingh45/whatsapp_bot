@@ -245,19 +245,21 @@ def calculate_current_month_expense(phone_number):
         if not user:
             return 0.0
         
-        # Calculate start and end of current month
+        # Calculate start of the current month
         now = datetime.now()
         start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         
-        # Query receipts for current month
+        # Query receipts for the current month
         current_month_receipts = Receipt.query.filter(
             Receipt.user_id == user.id,
-            Receipt.date_time >= start_of_month
+            # Convert date_time string to datetime object for comparison
+            db.func.datetime(Receipt.date_time) >= start_of_month
         ).all()
         
         # Sum the amounts
         total_expense = sum(receipt.amount for receipt in current_month_receipts)
         return total_expense
+
 
 def calculate_quarterly_expenses(phone_number):
     """Calculate expenses for the last 3 months"""
@@ -284,8 +286,9 @@ def calculate_quarterly_expenses(phone_number):
         def calculate_month_expense(start_date, end_date):
             month_receipts = Receipt.query.filter(
                 Receipt.user_id == user.id,
-                Receipt.date_time >= start_date,
-                Receipt.date_time < end_date
+                # Convert date_time string to datetime object for comparison
+                db.func.datetime(Receipt.date_time) >= start_date,
+                db.func.datetime(Receipt.date_time) < end_date
             ).all()
             return sum(receipt.amount for receipt in month_receipts)
         
@@ -308,6 +311,7 @@ def calculate_quarterly_expenses(phone_number):
             'month3': month3_expense,
             'trend': trend
         }
+
 
 def process_receipt_image(message, from_number):
     """Process receipt image (your existing logic)"""
