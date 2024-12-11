@@ -217,14 +217,14 @@ def send_interactive_menu(phone_number, previous_response):
                         "type": "reply",
                         "reply": {
                             "id": "current_month_expense",
-                            "title": "Current Month Expense"
+                            "title": "This Month Expense"
                         }
                     },
                     {
                         "type": "reply",
                         "reply": {
                             "id": "last_3_months_summary",
-                            "title": "Last 3 Months Summary"
+                            "title": "3 Months Summary"
                         }
                     }
                 ]
