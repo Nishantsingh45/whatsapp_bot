@@ -236,6 +236,7 @@ def send_interactive_menu(phone_number, previous_response):
     # Use your Meta WhatsApp Service to send the message
     MetaWhatsAppService.send_whatsapp_interactive_message(phone_number,interactive_message)
 
+
 def calculate_current_month_expense(phone_number):
     """Calculate total expenses for the current month"""
     with app.app_context():
@@ -252,8 +253,8 @@ def calculate_current_month_expense(phone_number):
         # Query receipts for the current month
         current_month_receipts = Receipt.query.filter(
             Receipt.user_id == user.id,
-            # Convert date_time string to datetime object for comparison
-            db.func.datetime(Receipt.date_time) >= start_of_month
+            # SQLite conversion for datetime comparison
+            func.datetime(Receipt.date_time) >= start_of_month
         ).all()
         
         # Sum the amounts
@@ -286,9 +287,9 @@ def calculate_quarterly_expenses(phone_number):
         def calculate_month_expense(start_date, end_date):
             month_receipts = Receipt.query.filter(
                 Receipt.user_id == user.id,
-                # Convert date_time string to datetime object for comparison
-                db.func.datetime(Receipt.date_time) >= start_date,
-                db.func.datetime(Receipt.date_time) < end_date
+                # SQLite conversion for datetime comparison
+                func.datetime(Receipt.date_time) >= start_date,
+                func.datetime(Receipt.date_time) < end_date
             ).all()
             return sum(receipt.amount for receipt in month_receipts)
         
