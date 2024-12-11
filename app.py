@@ -7,6 +7,8 @@ from config import Config
 import logging
 from sqlalchemy import func
 from sqlalchemy import DateTime
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 
 def create_app():
@@ -238,7 +240,6 @@ def send_interactive_menu(phone_number, previous_response):
     
     # Use your Meta WhatsApp Service to send the message
     MetaWhatsAppService.send_whatsapp_interactive_message(phone_number,interactive_message)
-
 def calculate_current_month_expense(phone_number):
     """Calculate total expenses for the current month"""
     with app.app_context():
@@ -248,22 +249,24 @@ def calculate_current_month_expense(phone_number):
         if not user:
             return 0.0
         
-        # Calculate start of the current month
-        now = datetime.now()
+        # Current time in UTC (adjust if necessary)
+        now = datetime.utcnow()
+        # Start of the current month
         start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        # Start of the next month
+        start_of_next_month = start_of_month + relativedelta(months=1)
         
-        # Query receipts for the current month
-        current_month_receipts = Receipt.query.filter(
+        # Query the sum of amounts directly in the database
+        total_expense = db.session.query(func.coalesce(func.sum(Receipt.amount), 0.0)).filter(
             Receipt.user_id == user.id,
-            Receipt.date_time.cast(DateTime) >= start_of_month
-        ).all()
+            Receipt.date_time >= start_of_month,
+            Receipt.date_time < start_of_next_month
+        ).scalar()
         
-        # Sum the amounts
-        total_expense = sum(receipt.amount for receipt in current_month_receipts)
-        return total_expense
+        return float(total_expense)
 
 def calculate_quarterly_expenses(phone_number):
-    """Calculate expenses for the last 3 months"""
+    """Calculate expenses for the last 3 full months"""
     with app.app_context():
         # Get current user
         user = User.query.filter_by(phone=phone_number).first()
@@ -277,41 +280,48 @@ def calculate_quarterly_expenses(phone_number):
                 'trend': 'No data'
             }
         
-        # Calculate start dates for last 3 months
-        now = datetime.now()
-        month1_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        month2_start = (month1_start - timedelta(days=1)).replace(day=1)
-        month3_start = (month2_start - timedelta(days=1)).replace(day=1)
+        # Current time in UTC (adjust if necessary)
+        now = datetime.utcnow()
+        # Start of the current month
+        start_of_current_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        # Start of the previous three months
+        month3_start = start_of_current_month - relativedelta(months=3)
+        month2_start = start_of_current_month - relativedelta(months=2)
+        month1_start = start_of_current_month - relativedelta(months=1)
+        # Start of next month after the current month (for end boundary)
+        start_of_next_month = start_of_current_month + relativedelta(months=1)
         
-        # Helper function for calculating monthly expenses
+        # Helper function to calculate monthly expenses
         def calculate_month_expense(start_date, end_date):
-            month_receipts = Receipt.query.filter(
+            expense = db.session.query(func.coalesce(func.sum(Receipt.amount), 0.0)).filter(
                 Receipt.user_id == user.id,
-                Receipt.date_time.cast(DateTime) >= start_date,
-                Receipt.date_time.cast(DateTime) < end_date
-            ).all()
-            return sum(receipt.amount for receipt in month_receipts)
+                Receipt.date_time >= start_date,
+                Receipt.date_time < end_date
+            ).scalar()
+            return float(expense)
         
-        month1_expense = calculate_month_expense(month1_start, now)
-        month2_expense = calculate_month_expense(month2_start, month1_start)
+        # Calculate expenses for each of the last three months
         month3_expense = calculate_month_expense(month3_start, month2_start)
+        month2_expense = calculate_month_expense(month2_start, month1_start)
+        month1_expense = calculate_month_expense(month1_start, start_of_current_month)
         
         # Determine trend
-        if month1_expense > month2_expense and month2_expense > month3_expense:
+        if month1_expense > month2_expense > month3_expense:
             trend = "📈 Increasing"
-        elif month1_expense < month2_expense and month2_expense < month3_expense:
+        elif month1_expense < month2_expense < month3_expense:
             trend = "📉 Decreasing"
         else:
             trend = "↔️ Stable"
         
+        total_expense = month1_expense + month2_expense + month3_expense
+        
         return {
-            'total': month1_expense + month2_expense + month3_expense,
+            'total': total_expense,
             'month1': month1_expense,
             'month2': month2_expense,
             'month3': month3_expense,
             'trend': trend
         }
-
 
 def process_receipt_image(message, from_number):
     """Process receipt image (your existing logic)"""
