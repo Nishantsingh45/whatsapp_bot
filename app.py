@@ -111,7 +111,7 @@ def webhook():
     if request.method == 'POST':
         try:
             data = request.get_json()
-            
+            print(data)
             # Extract message details
             entry = data['entry'][0]
             changes = entry['changes'][0]
@@ -139,6 +139,7 @@ def webhook():
                             
                             elif button_id == 'last_3_months_summary':
                                 quarterly_expenses = calculate_quarterly_expenses(from_number)
+                                print("quarter_expense: ",quarterly_expenses)
                                 response_message = f"""📊 Last 3 Months Summary:
 💰 Total Expenses: ${quarterly_expenses['total']:.2f}
 📈 Trend: {quarterly_expenses['trend']}
