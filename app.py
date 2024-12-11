@@ -9,6 +9,7 @@ from sqlalchemy import func
 from sqlalchemy import DateTime
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from sqlalchemy import func, cast, DateTime
 
 
 def create_app():
@@ -256,14 +257,17 @@ def calculate_current_month_expense(phone_number):
         # Start of the next month
         start_of_next_month = start_of_month + relativedelta(months=1)
         
-        # Query the sum of amounts directly in the database
-        total_expense = db.session.query(func.coalesce(func.sum(Receipt.amount), 0.0)).filter(
+        # Query the sum of amounts directly in the database with casting
+        total_expense = db.session.query(
+            func.coalesce(func.sum(Receipt.amount), 0.0)
+        ).filter(
             Receipt.user_id == user.id,
-            Receipt.date_time >= start_of_month,
-            Receipt.date_time < start_of_next_month
+            cast(Receipt.date_time, DateTime) >= start_of_month,
+            cast(Receipt.date_time, DateTime) < start_of_next_month
         ).scalar()
         
         return float(total_expense)
+
 
 def calculate_quarterly_expenses(phone_number):
     """Calculate expenses for the last 3 full months"""
@@ -288,15 +292,15 @@ def calculate_quarterly_expenses(phone_number):
         month3_start = start_of_current_month - relativedelta(months=3)
         month2_start = start_of_current_month - relativedelta(months=2)
         month1_start = start_of_current_month - relativedelta(months=1)
-        # Start of next month after the current month (for end boundary)
-        start_of_next_month = start_of_current_month + relativedelta(months=1)
         
-        # Helper function to calculate monthly expenses
+        # Helper function to calculate monthly expenses with casting
         def calculate_month_expense(start_date, end_date):
-            expense = db.session.query(func.coalesce(func.sum(Receipt.amount), 0.0)).filter(
+            expense = db.session.query(
+                func.coalesce(func.sum(Receipt.amount), 0.0)
+            ).filter(
                 Receipt.user_id == user.id,
-                Receipt.date_time >= start_date,
-                Receipt.date_time < end_date
+                cast(Receipt.date_time, DateTime) >= start_date,
+                cast(Receipt.date_time, DateTime) < end_date
             ).scalar()
             return float(expense)
         
@@ -322,7 +326,6 @@ def calculate_quarterly_expenses(phone_number):
             'month3': month3_expense,
             'trend': trend
         }
-
 def process_receipt_image(message, from_number):
     """Process receipt image (your existing logic)"""
     media_id = message['image']['id']
