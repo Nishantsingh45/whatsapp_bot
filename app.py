@@ -6,6 +6,8 @@ from services.storage_service import SupabaseStorageService
 from config import Config
 import logging
 from sqlalchemy import func
+from sqlalchemy import DateTime
+
 
 def create_app():
     app = Flask(__name__)
@@ -237,7 +239,6 @@ def send_interactive_menu(phone_number, previous_response):
     # Use your Meta WhatsApp Service to send the message
     MetaWhatsAppService.send_whatsapp_interactive_message(phone_number,interactive_message)
 
-
 def calculate_current_month_expense(phone_number):
     """Calculate total expenses for the current month"""
     with app.app_context():
@@ -254,14 +255,12 @@ def calculate_current_month_expense(phone_number):
         # Query receipts for the current month
         current_month_receipts = Receipt.query.filter(
             Receipt.user_id == user.id,
-            # SQLite conversion for datetime comparison
-            func.datetime(Receipt.date_time) >= start_of_month
+            Receipt.date_time.cast(DateTime) >= start_of_month
         ).all()
         
         # Sum the amounts
         total_expense = sum(receipt.amount for receipt in current_month_receipts)
         return total_expense
-
 
 def calculate_quarterly_expenses(phone_number):
     """Calculate expenses for the last 3 months"""
@@ -284,13 +283,12 @@ def calculate_quarterly_expenses(phone_number):
         month2_start = (month1_start - timedelta(days=1)).replace(day=1)
         month3_start = (month2_start - timedelta(days=1)).replace(day=1)
         
-        # Calculate expenses for each month
+        # Helper function for calculating monthly expenses
         def calculate_month_expense(start_date, end_date):
             month_receipts = Receipt.query.filter(
                 Receipt.user_id == user.id,
-                # SQLite conversion for datetime comparison
-                func.datetime(Receipt.date_time) >= start_date,
-                func.datetime(Receipt.date_time) < end_date
+                Receipt.date_time.cast(DateTime) >= start_date,
+                Receipt.date_time.cast(DateTime) < end_date
             ).all()
             return sum(receipt.amount for receipt in month_receipts)
         
