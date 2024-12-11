@@ -123,7 +123,7 @@ def webhook():
                 from_number = message['from']
                 
                 # Handle different message types
-                if message.get('type') == 'text':
+                if message.get('type') == 'text' or 'interactive' in message:
                     # Check if it's a reply to interactive buttons
                     if 'interactive' in message:
                         interactive_type = message['interactive'].get('type')
