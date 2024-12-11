@@ -197,7 +197,7 @@ def send_initial_interactive_menu(phone_number):
     }
     
     # Use your Meta WhatsApp Service to send the message
-    MetaWhatsAppService.send_whatsapp_interactive_message(interactive_message)
+    MetaWhatsAppService.send_whatsapp_interactive_message(phone_number,interactive_message)
 
 def send_interactive_menu(phone_number, previous_response):
     """Send interactive menu after showing previous results"""
@@ -233,7 +233,7 @@ def send_interactive_menu(phone_number, previous_response):
     }
     
     # Use your Meta WhatsApp Service to send the message
-    MetaWhatsAppService.send_whatsapp_interactive_message(interactive_message)
+    MetaWhatsAppService.send_whatsapp_interactive_message(phone_number,interactive_message)
 
 def calculate_current_month_expense(phone_number):
     """Calculate total expenses for the current month"""

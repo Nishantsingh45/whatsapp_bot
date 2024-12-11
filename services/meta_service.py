@@ -81,34 +81,34 @@ class MetaWhatsAppService:
             return False
         
     @staticmethod
-    def send_whatsapp_interactive_message(phone_number, interactive_payload):
+    def send_whatsapp_interactive_message(phone_number, interactive_message):
         """
         Send interactive WhatsApp message via Meta API
         
         :param phone_number: Recipient's phone number
-        :param interactive_payload: Dictionary containing interactive message details
+        :param interactive_message: Dictionary containing interactive message details
         """
         try:
             url = f"https://graph.facebook.com/v18.0/{Config.META_WA_PHONE_NUMBER_ID}/messages"
             
-            # Use the passed interactive payload directly
-            payload = {
-                "messaging_product": "whatsapp",
-                "recipient_type": "individual",
-                "to": phone_number,
-                **interactive_payload
-            }
+            # If interactive message doesn't include messaging product, add it
+            if 'messaging_product' not in interactive_message:
+                interactive_message['messaging_product'] = "whatsapp"
+            
+            # Ensure recipient type and to fields are present
+            interactive_message['recipient_type'] = "individual"
+            interactive_message['to'] = phone_number
             
             headers = {
                 "Authorization": f"Bearer {Config.META_WA_TOKEN}",
                 "Content-Type": "application/json"
             }
             
-            response = requests.post(url, json=payload, headers=headers)
+            response = requests.post(url, json=interactive_message, headers=headers)
             response.raise_for_status()
             
             # Log successful message send
-            logging.info(f"Interactive message sent to {phone_number}")
+            logging.info(f"Interactive message sent successfully to {phone_number}")
             return True
         
         except requests.exceptions.RequestException as e:
