@@ -6,7 +6,7 @@ from openai import OpenAI
 import base64
 import requests, json
 import os,json
-
+from google import genai
 def encode_image(image_url):
     """
     Encode an image to base64
@@ -66,7 +66,7 @@ class AIReceiptService:
             return AIReceiptService._parse_receipt_info(content)
         except Exception as e:
             logging.error(f"OpenAI Processing Error: {e}")
-            return None
+            return process_receipt_image_gemini(image_url)
 
     @staticmethod
     def _parse_receipt_info(content):
@@ -101,3 +101,48 @@ class AIReceiptService:
     def _extract_category(text):
         # TODO: Implement category extraction
         return "other"
+
+
+def process_receipt_image_gemini(image_url):
+    """
+    Fallback method to process receipt image using Google Gemini
+    """
+    try:
+        # Initialize Gemini client
+        genai.configure(api_key=Config.GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+
+        # Encode the image
+        with open(image_url, "rb") as image_file:
+            image_parts = [
+                {
+                    "mime_type": "image/jpeg",
+                    "data": image_file.read()
+                }
+            ]
+
+        # Prepare the prompt
+        prompt = '''Extract detailed information from this receipt. Return a JSON-formatted response with the following structure:
+        {
+            "Date": "Date and time",
+            "total amount": "total amount",
+            "seller name": "name of seller", 
+            "item summary": "summary of what was bought",
+            "category": "category that this expense belongs to (food, shopping, travel, utilities, other)"
+        }'''
+
+        # Generate response
+        response = model.generate_content(
+            contents=[prompt] + image_parts,
+            generation_config=genai.types.GenerationConfig(
+                response_mime_type="application/json"
+            )
+        )
+
+        # Parse the JSON response
+        content = json.loads(response.text)
+        return AIReceiptService._parse_receipt_info(content)
+    
+    except Exception as e:
+        logging.error(f"Gemini Processing Error: {e}")
+        return None
