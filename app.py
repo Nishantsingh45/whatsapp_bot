@@ -142,7 +142,8 @@ def webhook():
                                 current_month_expense = calculate_current_month_expense(from_number)
                                 response_message = f"🧾 Current Month Expenses:\n💰 Total: ${current_month_expense:.2f}"
                                 send_interactive_menu(from_number, response_message)
-                            
+                            elif button_id == 'send_image':
+                                MetaWhatsAppService.send_whatsapp_message(from_number, "Please Provide your Receipt Image to get the Expense details")
                             elif button_id == 'last_3_months_summary':
                                 quarterly_expenses = calculate_quarterly_expenses(from_number)
                                 print("quarter_expense: ",quarterly_expenses)
@@ -196,6 +197,13 @@ def send_initial_interactive_menu(phone_number):
                         "reply": {
                             "id": "last_3_months_summary",
                             "title": "3 Months Summary"
+                        }
+                    },
+                    {
+                        "type": "reply",
+                        "reply": {
+                            "id": "send_image",
+                            "title": "Send an Image of your bill/receipt"
                         }
                     }
                 ]
