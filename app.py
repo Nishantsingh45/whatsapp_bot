@@ -367,7 +367,7 @@ def process_receipt_image(message, from_number):
             db.session.commit()
         date_time = receipt_info['date_time']
         date_time = datetime.fromisoformat(date_time)
-        formatted_date = date_time.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_date = date_time.strftime("%B %d, %Y %I:%M:%S %p")
         confirmation_msg = f"""📋 Receipt Processed Successfully! 
 💰 Amount: ${receipt_info['amount']:.2f}
 🏪 Seller: {receipt_info['seller']}
