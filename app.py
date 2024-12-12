@@ -257,13 +257,13 @@ def calculate_current_month_expense(phone_number):
         # Start of the next month
         start_of_next_month = start_of_month + relativedelta(months=1)
         
-        # Query the sum of amounts directly in the database with casting
+        # Query the sum of amounts directly in the database
         total_expense = db.session.query(
             func.coalesce(func.sum(Receipt.amount), 0.0)
         ).filter(
             Receipt.user_id == user.id,
-            cast(Receipt.date_time, DateTime) >= start_of_month,
-            cast(Receipt.date_time, DateTime) < start_of_next_month
+            Receipt.date_time >= start_of_month,
+            Receipt.date_time < start_of_next_month
         ).scalar()
         
         return float(total_expense)
@@ -293,14 +293,14 @@ def calculate_quarterly_expenses(phone_number):
         month2_start = start_of_current_month - relativedelta(months=1)
         month1_start = start_of_current_month - relativedelta(months=0)
         
-        # Helper function to calculate monthly expenses with casting
+        # Helper function to calculate monthly expenses
         def calculate_month_expense(start_date, end_date):
             expense = db.session.query(
                 func.coalesce(func.sum(Receipt.amount), 0.0)
             ).filter(
                 Receipt.user_id == user.id,
-                cast(Receipt.date_time, DateTime) >= start_date,
-                cast(Receipt.date_time, DateTime) < end_date
+                Receipt.date_time >= start_date,
+                Receipt.date_time < end_date
             ).scalar()
             return float(expense)
         

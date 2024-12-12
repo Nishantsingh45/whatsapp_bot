@@ -49,10 +49,10 @@ class AIReceiptService:
                     "content": [
                         {"type": "text", "text": ''''Extract detailed information from this receipt: date, total amount, seller name, items summary, and category (choose from: food, shopping, travel, utilities, other).Return a JSON-formatted response.
                          {
-                            "Date": "Date and time",
+                            "Date": "Date and time in DateTime format",
                             "total amount": "total amount",
                             "seller name": "name of seller",
-                            "item summary": "summary of what was bought",
+                            "item summary": "summary of what was bought with its unit price , quantity and total price if available",
                          "category": "category that this expense belongs to"
                            
                         }'''},
@@ -124,10 +124,10 @@ def process_receipt_image_gemini(image_url):
         # Prepare the prompt
         prompt = '''Extract detailed information from this receipt. Return a JSON-formatted response with the following structure:
         {
-            "Date": "Date and time",
+            "Date": "Date and time in DateTime format",
             "total amount": "total amount",
             "seller name": "name of seller", 
-            "item summary": "summary of what was bought",
+            "item summary": "summary of what was bought with its unit price , quantity and total price if available",
             "category": "category that this expense belongs to (food, shopping, travel, utilities, other)"
         }'''
 

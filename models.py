@@ -18,7 +18,7 @@ class Receipt(db.Model):
     id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String, db.ForeignKey('users.id'), nullable=False)
     image_url = db.Column(db.String, nullable=False)
-    date_time = db.Column(db.String)
+    date_time = db.Column(db.DateTime)#db.Column(db.String)
     amount = db.Column(db.Float)
     seller = db.Column(db.String)
     summary = db.Column(db.String)
