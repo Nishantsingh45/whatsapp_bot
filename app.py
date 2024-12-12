@@ -233,6 +233,13 @@ def send_interactive_menu(phone_number, previous_response):
                             "id": "last_3_months_summary",
                             "title": "3 Months Summary"
                         }
+                    },
+                    {
+                        "type": "reply",
+                        "reply": {
+                            "id": "send_image",
+                            "title": "Send an Image of your bill/receipt"
+                        }
                     }
                 ]
             }
@@ -350,12 +357,13 @@ def process_receipt_image(message, from_number):
             )
             db.session.add(receipt)
             db.session.commit()
-        
+        date_time = receipt_info['date_time']
+        formatted_date = date_time.strftime('%A, %B %d, %Y at %I:%M %p')
         confirmation_msg = f"""📋 Receipt Processed Successfully! 
 💰 Amount: ${receipt_info['amount']:.2f}
 🏪 Seller: {receipt_info['seller']}
 📝 Summary: {receipt_info['summary']}
-📅 Date: {receipt_info['date_time']}
+📅 Date: {formatted_date}
 🏷️ Category: {receipt_info['category']}
 
 Thank you for uploading your receipt! 🎉
