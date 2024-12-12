@@ -75,7 +75,7 @@ class AIReceiptService:
         """
         try:
             raw_amount = content['total amount']
-            sanitized_amount = float(raw_amount.replace('$', '').replace(',', ''))  # Remove $ and commas
+            sanitized_amount = float(raw_amount.replace('$', '').replace('₹', '').replace(',', '').strip())
             return {
                 'date_time': content['Date'],  # Rename 'Date' to 'date_time'
                 'amount': sanitized_amount,  # Convert 'total amount' to a float
