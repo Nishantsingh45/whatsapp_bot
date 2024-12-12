@@ -52,7 +52,7 @@ class AIReceiptService:
                             "Date": "Date and time in DateTime format",
                             "total amount": "total amount",
                             "seller name": "name of seller",
-                            "item summary": "summary of what was bought with its unit price , quantity and total price if available",
+                            "item summary": "summary of what was bought with its unit price , quantity and total price if available in proper text form ",
                          "category": "category that this expense belongs to"
                            
                         }'''},
@@ -127,7 +127,7 @@ def process_receipt_image_gemini(image_url):
             "Date": "Date and time in DateTime format",
             "total amount": "total amount",
             "seller name": "name of seller", 
-            "item summary": "summary of what was bought with its unit price , quantity and total price if available",
+            "item summary": "summary of what was bought with its unit price , quantity and total price if available in proper text form ",
             "category": "category that this expense belongs to (food, shopping, travel, utilities, other)"
         }'''
 
