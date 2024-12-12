@@ -203,7 +203,7 @@ def send_initial_interactive_menu(phone_number):
                         "type": "reply",
                         "reply": {
                             "id": "send_image",
-                            "title": "Send an Image of your bill/receipt"
+                            "title": "Bill/Receipt Image"
                         }
                     }
                 ]
@@ -246,7 +246,7 @@ def send_interactive_menu(phone_number, previous_response):
                         "type": "reply",
                         "reply": {
                             "id": "send_image",
-                            "title": "Send an Image of your bill/receipt"
+                            "title": "Bill/Receipt Image"
                         }
                     }
                 ]
