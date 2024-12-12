@@ -6,7 +6,7 @@ from openai import OpenAI
 import base64
 import requests, json
 import os,json
-from google import genai
+import google.generativeai as genai
 def encode_image(image_url):
     """
     Encode an image to base64
