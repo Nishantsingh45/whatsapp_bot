@@ -79,8 +79,8 @@ class AIReceiptService:
             return {
                 'date_time': content['Date'],  # Rename 'Date' to 'date_time'
                 'amount': sanitized_amount,  # Convert 'total amount' to a float
-                'seller': str(content['seller name']),  # Rename 'seller name' to 'seller'
-                'summary': content['item summary'],  # Rename 'item summary' to 'summary'
+                'seller': content['seller name'],  # Rename 'seller name' to 'seller'
+                'summary': str(content['item summary']),  # Rename 'item summary' to 'summary'
                 'category': content['category']  # No change for 'category'
             }
         except Exception as e:
